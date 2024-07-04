@@ -1,0 +1,175 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Anomaly Detection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f2f2f2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        h1 {
+            color: #007bff;
+            font-size: 5vh;
+            margin-bottom: 30vw;
+            margin-right: 10vw;
+            text-align: center;
+        }
+
+        form {
+            background-color: #ffffff;
+            padding: 5vw;
+            border-radius: 10vw;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            width: 300px;
+            align-items: center;
+            
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            margin-top: 5px;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+            align-items: center;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        #result {
+            font-weight: bold;
+            margin-top: 20px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Anomaly Detection</h1>
+    <form method="post" action="{% url 'detect_anomaly' %}">
+        {% csrf_token %}
+        <label for="feature1">Usage:</label>
+        <input type="number" name="feature1" step="0.01" required>
+        <label for="feature2">Required Credits:</label>
+        <input type="number" name="feature2" step="0.01" required>
+        <input type="submit" value="Detect Anomaly">
+    </form>
+    <p id="result"></p>
+    <script>
+        document.querySelector('form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const form = e.target;
+            fetch(form.action, {
+                method: 'POST',
+                body: new URLSearchParams(new FormData(form)),
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultElement = document.getElementById('result');
+                if (data.anomaly) {
+                    resultElement.innerHTML = 'Anomaly Detected!';
+                } else {
+                    resultElement.innerHTML = 'No Anomaly Detected.';
+                }
+            });
+        });
+    </script>
+    <style>
+        .flip-container {
+            perspective: 1000px;
+            width: 200px;
+            height: 200px;
+            position: relative;
+            margin-top: auto;
+            align-items: end;
+        }
+
+        .flip-container:hover .flipper,
+        .flip-container.hover .flipper {
+            transform: rotateY(180deg);
+        }
+
+        .flipper {
+            transition: 0.6s;
+            transform-style: preserve-3d;
+            position: relative;
+        }
+
+        .front,
+        .back {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .front {
+            background-color: #f0f0f0;
+            z-index: 2;
+        }
+
+        .back {
+            transform: rotateY(180deg);
+            background-color: #eaeaea;
+        }
+
+        
+        .flip-container:first-child {
+            margin-right: 20px;
+        }
+    </style>
+
+    <div class="flip-container" onclick="this.classList.toggle('hover')">
+        <div class="flipper">
+            <div class="front">
+                <img src="{% static 'anomaly/images/img1.jpg' %}" alt="Image 1" width="350" height="300">
+            </div>
+            <div class="back">
+                <p>Intensifying the greenhouse effect, causing global warming and adverse impacts on climate, ecosystems, and sea levels</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="flip-container" onclick="this.classList.toggle('hover')">
+        <div class="flipper">
+            <div class="front">
+                <img src="{% static 'anomaly/images/img2.jpg' %}" alt="Image 2" width="350" height="300">
+            </div>
+            <div class="back">
+                <p>"Cherish the green earth, for it holds the seeds of our future."</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
